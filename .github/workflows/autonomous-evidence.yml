@@ -1,0 +1,35 @@
+name: RX50 Autonomous Evidence Loop
+
+on:
+  push:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evidence-loop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run regression tests
+        run: python -m pytest -q
+
+      - name: Run evidence controller
+        run: python harness/controller.py
+
+      - name: Persist controller state as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rx50-controller-state
+          path: state/controller_state.json
+          if-no-files-found: error
