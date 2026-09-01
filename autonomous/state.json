@@ -1,0 +1,35 @@
+{
+  "blockers": [
+    "BLOCKED",
+    "HOLD",
+    "NOT AUTHORIZED",
+    "NOT LOCKED"
+  ],
+  "evidence_hashes": {
+    "calculations/M006.5_CONTINUITY_SCAN_TIMING_FRAMEWORK.md": "67674ce01ff2bded5c9624c33587066c8f73235ef025a7c4c0d5eaba733f3565",
+    "decisions/DECISION_REGISTER.md": "4c0316a99e16614613d85c96b149bf199bbf0c1574a999f4c3da79896709a7d1",
+    "evidence/EVIDENCE_REGISTER.md": "2501fa98cfde87f35b350a2f3cc9519a089a8695c72a0cd3855c6dd99edfe8ee",
+    "harness/open_issues/OI-15_STM32_VIN_PIN_DOWN.md": "d0509c0d189b09ba9e2640a4cfab4baf5d4e67d1ac08662d5289497fd02475d0",
+    "harness/state/CONTRADICTION_REGISTER.md": "f2e392cb87d40da46cdf80d03677d5f839b11fb28817ced03e53da288f25e861",
+    "harness/state/project_state.md": "81a7c41c7ef2352dfbd44bd64a0ca3fa86d7dffa92f0f95847e36a72630fd14c",
+    "measurements/T-G4-06_CURRENT_LIMIT_SAFETY_RECORD.md": "58ca879547d255e64299310531a0d468230300c33615adaf9607e1025efb08cc"
+  },
+  "history": [
+    {
+      "changed": [
+        "calculations/M006.5_CONTINUITY_SCAN_TIMING_FRAMEWORK.md",
+        "decisions/DECISION_REGISTER.md",
+        "evidence/EVIDENCE_REGISTER.md",
+        "harness/open_issues/OI-15_STM32_VIN_PIN_DOWN.md",
+        "harness/state/CONTRADICTION_REGISTER.md",
+        "harness/state/project_state.md",
+        "measurements/T-G4-06_CURRENT_LIMIT_SAFETY_RECORD.md"
+      ],
+      "iteration": 1,
+      "removed": []
+    }
+  ],
+  "iteration": 1,
+  "state": "HOLD",
+  "updated_at": "2026-09-01T01:16:59.506799+00:00"
+}
