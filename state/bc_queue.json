@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "max_iterations": 8,
+  "queue": [
+    {
+      "id": "BC5",
+      "status": "AUDIT_REQUIRED",
+      "evidence": [],
+      "owner_authorized": false,
+      "safety_authorized": false,
+      "frozen": false
+    }
+  ]
+}
