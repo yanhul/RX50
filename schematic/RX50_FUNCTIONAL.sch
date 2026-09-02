@@ -25,7 +25,7 @@ $Comp
 L MCU_ST_STM32F1:STM32F103C8Tx U1
 U 1 1 1
 P 3200 3300
-F 0 "U1" H 2750 4850 50  0000 C CNN
+F 0 "U1" H 2750 4850 50 0000 C CNN
 F 1 "STM32F103C8T6" H 3200 1750 50 0000 C CNN
 	1    3200 3300
 	1 0 0 -1
@@ -73,7 +73,7 @@ RS485_A
 Text Label 8400 4200 0 50 ~ 0
 RS485_B
 Text Notes 6700 4850 0 50 ~ 10
-Half-duplex RS485. Link speed is MCU-limited; no 10-Mbit MCU claim.
+Half-duplex RS485. Link speed is MCU-limited; no unsupported rate claim.
 $Comp
 L 74xx:74HC595 U4
 U 1 1 4
@@ -101,7 +101,7 @@ SR_RCLK
 Text Label 9700 2700 2 50 ~ 0
 SRCLR
 Text Notes 9800 3750 0 55 ~ 11
-7 x 74HC595 total = 56 storage bits; channels CH00..CH49 use 50 bits; spare bits CH50..CH55 must remain OFF. U4 and U5 shown as endpoints; U6..U10 are the five intervening identical devices.
+7 x 74HC595 total = 56 storage bits; channels CH00..CH49 use 50 bits; spare bits CH50..CH55 must remain OFF. U4 and U5 are endpoint representatives; U6..U10 are the five intervening identical devices.
 Text Notes 9800 3950 0 55 ~ 11
 SER -> U4 -> U5 -> ... -> U10 cascade. RCLK common. OE is NOT MCU-owned; it is driven by the hardware interlock.
 Text Label 11600 2300 0 50 ~ 0
@@ -127,8 +127,9 @@ F 0 "U12" H 13300 7280 50 0000 C CNN
 F 1 "CD4067B #4" H 13300 7180 50 0000 C CNN
 	1    13300 6200
 	1 0 0 -1
+$EndComp
 Text Notes 9200 7850 0 55 ~ 11
-Continuity candidate: 4 x 16:1 CD4067, shared address A/B/C/D, four independent sense outputs to ADC1/ADC2 channels. U13/U14 omitted graphically as identical middle units.
+Continuity candidate: 4 x 16:1 CD4067, shared address A/B/C/D, four independent sense outputs to ADC0..3. U13/U14 omitted graphically as identical middle units.
 Text Notes 9200 8050 0 55 ~ 11
 G4 OPEN: CD4067 RON at 3.3 V is not specified; settling is not guaranteed. Do not assign divider values or production thresholds until measurement closes G4.
 Text Label 9400 5500 2 50 ~ 0
