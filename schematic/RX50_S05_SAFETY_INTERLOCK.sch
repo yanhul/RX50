@@ -2,7 +2,7 @@ EESchema Schematic File Version 4
 EELAYER 29 0
 EELAYER END
 $Descr A3 16535 11693
-Sheet 6 7
+Sheet 6 8
 Title "RX50 S05 — Hardware Safety Interlock"
 Comment1 "OE ownership / inhibit boundary"
 Comment2 "G6 OPEN"
