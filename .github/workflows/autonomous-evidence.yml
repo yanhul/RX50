@@ -43,8 +43,11 @@ jobs:
           if git diff --cached --quiet; then
             echo "No controller state change."
           else
+            git fetch origin main
+            git rebase origin/main
+            git add state/controller_state.json
             git commit -m "harness: persist RX50 controller checkpoint [skip ci]"
-            git push
+            git push origin HEAD:main
           fi
 
       - name: Publish checkpoint artifact
