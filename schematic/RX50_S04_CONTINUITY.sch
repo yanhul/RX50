@@ -2,7 +2,7 @@ EESchema Schematic File Version 4
 EELAYER 29 0
 EELAYER END
 $Descr A3 16535 11693
-Sheet 5 7
+Sheet 5 8
 Title "RX50 S04 — Continuity / ADC"
 Comment1 "4 x CD4067 candidate topology"
 Comment2 "G4 OPEN"
