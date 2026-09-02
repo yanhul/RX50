@@ -7,7 +7,7 @@ LIBS:Connector_Generic
 EELAYER 29 0
 EELAYER END
 $Descr A3 16535 11693
-Sheet 1 7
+Sheet 1 8
 Title "RX50 50-Channel Controller — 7-SHEET ROOT"
 Comment1 "PRE-RELEASE / STRUCTURAL SCHEMATIC"
 Comment2 "G1/G2 unresolved; firing-power implementation intentionally omitted"
