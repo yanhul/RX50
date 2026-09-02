@@ -2,7 +2,7 @@ EESchema Schematic File Version 4
 EELAYER 29 0
 EELAYER END
 $Descr A3 16535 11693
-Sheet 3 7
+Sheet 3 8
 Title "RX50 S02 — LoRa / RS485"
 Comment1 "SX1278 / RA-02 + MAX3485 interface boundary"
 Comment2 "PROVISIONAL"
