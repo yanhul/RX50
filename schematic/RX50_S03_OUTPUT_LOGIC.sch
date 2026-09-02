@@ -2,7 +2,7 @@ EESchema Schematic File Version 4
 EELAYER 29 0
 EELAYER END
 $Descr A3 16535 11693
-Sheet 4 7
+Sheet 4 8
 Title "RX50 S03 — 50-Channel Output Logic"
 Comment1 "7 x 74HC595 logical storage for 50 channels"
 Comment2 "Output power stage intentionally abstracted"
