@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "domain": "engineering",
+  "required": ["generation", "candidate", "parent_artifacts", "delta", "evidence", "tests", "verdict", "contradictions", "constraints", "claims"],
+  "invariants": {
+    "requirements_immutable": true,
+    "safety_criteria_immutable": true,
+    "evidence_hierarchy_immutable": true,
+    "contradictions_block_silent_promotion": true,
+    "agent_cannot_change_terminal_conditions": true
+  }
+}
