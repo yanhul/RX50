@@ -7,7 +7,12 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+  actions: read
+
+concurrency:
+  group: rx50-autonomous-evidence
+  cancel-in-progress: false
 
 jobs:
   evidence-loop:
@@ -24,13 +29,25 @@ jobs:
       - name: Install test dependency
         run: python -m pip install pytest
 
+      - name: Observe and resume durable controller
+        run: python harness/controller.py
+
       - name: Run regression tests
         run: python -m pytest -q
 
-      - name: Run evidence controller
-        run: python harness/controller.py
+      - name: Persist controller checkpoint
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/controller_state.json
+          if git diff --cached --quiet; then
+            echo "No controller state change."
+          else
+            git commit -m "harness: persist RX50 controller checkpoint [skip ci]"
+            git push
+          fi
 
-      - name: Persist controller state as artifact
+      - name: Publish checkpoint artifact
         uses: actions/upload-artifact@v4
         with:
           name: rx50-controller-state
