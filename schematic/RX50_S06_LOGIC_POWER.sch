@@ -2,7 +2,7 @@ EESchema Schematic File Version 4
 EELAYER 29 0
 EELAYER END
 $Descr A3 16535 11693
-Sheet 7 7
+Sheet 7 8
 Title "RX50 S06 — Logic Power / Protection Boundary"
 Comment1 "Logic-domain power architecture"
 Comment2 "Firing-power values intentionally omitted"
