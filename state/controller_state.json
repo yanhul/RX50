@@ -1,6 +1,6 @@
 {
   "current_item": "BC5",
-  "iteration": 2,
+  "iteration": 4,
   "last_error": "required evidence is missing",
   "phase": "YIELD",
   "previous_queue_sha256": "c00231e6ea7b8b52ee07496fbf4ab8787b1feab700bef440cbc565a3f28943b0",
@@ -8,5 +8,5 @@
   "result": "BLOCKED: NO EVIDENCE",
   "retry_count": 0,
   "terminal": false,
-  "updated_at": "2026-09-02T01:29:18.845041+00:00"
+  "updated_at": "2026-09-02T01:44:56.674979+00:00"
 }
