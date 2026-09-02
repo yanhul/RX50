@@ -2,7 +2,7 @@ EESchema Schematic File Version 4
 EELAYER 29 0
 EELAYER END
 $Descr A3 16535 11693
-Sheet 2 7
+Sheet 2 8
 Title "RX50 S01 — MCU / CONTROL / DEBUG"
 Comment1 "STM32F103C8T6 control boundary"
 Comment2 "PROVISIONAL / G5 NOT LOCKED"
