@@ -2,7 +2,7 @@ EESchema Schematic File Version 4
 EELAYER 29 0
 EELAYER END
 $Descr A3 16535 11693
-Sheet 8 7
+Sheet 8 8
 Title "RX50 S07 — Connectors / External Interfaces"
 Comment1 "External interface and channel grouping boundary"
 Comment2 "PROVISIONAL / TBD"
