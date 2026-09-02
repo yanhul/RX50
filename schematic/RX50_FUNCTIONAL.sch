@@ -21,6 +21,8 @@ Text Notes 700 700 0 120 ~ 24
 RX50 FUNCTIONAL SCHEMATIC — ARCHITECTURE / PRE-RELEASE
 Text Notes 700 950 0 65 ~ 13
 This artifact is an electrical-functional schematic, not a manufacturing release. No unsourced firing voltage/current/pulse/energy/timing/protection values are included.
+Text Notes 700 1100 0 55 ~ 11
+Firing voltage: TBD / HOLD. Firing current: TBD / HOLD. No firing-stage value is released by this functional schematic.
 $Comp
 L MCU_ST_STM32F1:STM32F103C8Tx U1
 U 1 1 1
