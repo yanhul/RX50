@@ -1,0 +1,12 @@
+{
+  "protocol_version": 1,
+  "capability": "rx50.engineering@1",
+  "owner": "yanhul/RX50",
+  "aios_authority": "yanhul/AIOS",
+  "role": "capability_workload",
+  "terminal_states": ["PASS", "BLOCKED", "INCONCLUSIVE"],
+  "verification_classes": ["requirements_coverage", "contradiction_check", "electrical_verification", "physical_evidence"],
+  "durable_loop": ["OBSERVE", "DECIDE", "ACT", "VERIFY", "PERSIST", "RESUME"],
+  "agent_may_modify_policy": false,
+  "agent_may_modify_terminal_conditions": false
+}
