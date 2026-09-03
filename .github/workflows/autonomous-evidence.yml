@@ -38,6 +38,12 @@ jobs:
         if: always()
         run: python harness/lineage/persist.py
 
+      - name: Run AIOS static conformance
+        run: python harness/aios_conformance.py
+
+      - name: Run AIOS runtime adversarial conformance
+        run: python harness/adversarial_conformance.py
+
       - name: Run regression tests
         run: python -m pytest -q
 
