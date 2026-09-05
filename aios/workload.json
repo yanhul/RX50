@@ -4,6 +4,8 @@
   "owner": "yanhul/RX50",
   "aios_authority": "yanhul/AIOS",
   "role": "capability_workload",
+  "adapter": "aios/adapter.py",
+  "entrypoint": "execute",
   "terminal_states": ["PASS", "BLOCKED", "INCONCLUSIVE"],
   "verification_classes": ["requirements_coverage", "contradiction_check", "electrical_verification", "physical_evidence"],
   "durable_loop": ["OBSERVE", "DECIDE", "ACT", "VERIFY", "PERSIST", "RESUME"],
