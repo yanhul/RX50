@@ -12,13 +12,38 @@ on:
       - '*.md'
       - '.github/workflows/aios-conformance.yml'
 
+permissions:
+  contents: read
+
+env:
+  AIOS_REF: fa7cc7fac4a650456f0f275198e4fcf8121b1788
+
 jobs:
   workload:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Checkout pinned AIOS core
+        uses: actions/checkout@v4
+        with:
+          repository: yanhul/AIOS
+          ref: ${{ env.AIOS_REF }}
+          path: .aios-core
+          fetch-depth: 1
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Run bounded AIOS engineering workload adapter
-        run: python -m aios.adapter
+
+      - name: Run bounded workload through central AIOS runner
+        env:
+          PYTHONPATH: .aios-core
+        run: |
+          python .aios-core/scripts/run_workload_adapter.py \
+            --workload-id RX50 \
+            --execution-id "rx50-${GITHUB_SHA}" \
+            --cwd . \
+            --problem "Evaluate the bounded RX50 engineering workload and report governed evidence." \
+            --timeout-seconds 300 \
+            -- python -m aios.adapter
