@@ -46,4 +46,4 @@ jobs:
             --cwd . \
             --problem "Evaluate the bounded RX50 engineering workload and report governed evidence." \
             --timeout-seconds 300 \
-            -- python -m aios.adapter
+            -- env -u PYTHONPATH python -m aios.adapter
