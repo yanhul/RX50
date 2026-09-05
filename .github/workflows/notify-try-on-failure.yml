@@ -25,7 +25,10 @@ jobs:
           CONCLUSION: ${{ github.event.workflow_run.conclusion }}
         run: |
           set -euo pipefail
-          test -n "$GH_TOKEN"
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "TRY_DISPATCH_TOKEN is not configured; notification delivery is BLOCKED." >&2
+            exit 0
+          fi
           gh api repos/yanhul/try/dispatches \
             -H 'Accept: application/vnd.github+json' \
             -f event_type='ci_failure' \
