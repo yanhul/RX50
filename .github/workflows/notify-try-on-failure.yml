@@ -2,7 +2,7 @@ name: Notify Try on CI Failure
 
 on:
   workflow_run:
-    workflows: ["AIOS Workload Conformance", "Autonomous Evidence"]
+    workflows: ["AIOS Workload Conformance", "RX50 Autonomous Evidence Loop"]
     types: [completed]
 
 permissions:
