@@ -23,6 +23,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Controlled E2E CI feedback probe
+        if: startsWith(github.ref, 'refs/heads/e2e-ci-feedback-probe-')
+        run: |
+          echo "CONTROLLED E2E PROBE: intentional failure for CI -> try receiver verification"
+          exit 1
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
