@@ -18,11 +18,12 @@
 | Observe → Decide → Act → Verify → Persist → Resume | IMPLEMENTED |
 | Evidence/safety gates outside agent | IMPLEMENTED |
 | Durable state + lineage | IMPLEMENTED |
-| Explicit generalized permit/capability object | TODO |
-| General contract verifier reusable by other substrates | TODO |
-| External-effect receipt/reconciliation layer | TODO |
+| Explicit generalized permit/capability object | AIOS-CENTRAL |
+| General contract/authority verifier | AIOS-CENTRAL |
+| External-effect receipt/reconciliation layer | AIOS-CENTRAL |
+| Central workload execution | AIOS-CENTRAL — pinned to `e2dc2c32bedf7de598b66e1bfe89f300fb83ccfc` |
 
-The TODO items are intentionally deferred to AIOS so this engineering repository does not grow a second incompatible control plane.
+RX50 does not grow a second incompatible control plane. The `aios/adapter.py` workload is executed by the central AIOS runner; RX50 remains responsible only for its engineering/evidence semantics and safety gates.
 
 ## Rule
 
