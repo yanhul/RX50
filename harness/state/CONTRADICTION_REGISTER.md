@@ -9,7 +9,7 @@
 |---|---|---|---|---|
 | C-03 | "USART1 10 Mbps" vs DS5319 USART1 4.5 Mbit/s @3.3 V | MEDIUM | DS5319 wins (measured datasheet) | CLAIM INVALIDATED — DS5319 is authority |
 | C-05 | SR control GPIO 4-5 vs 3-4 | MEDIUM | counting variance across reports | OPEN — signal count corrected to 3-4; final MCU pin allocation still requires owner-approved G5 pin-map evidence |
-| C-20b | CD4067 5 V path: STM32 VOH 2.9 V < CD4067 VIH 3.5 V | DEFINITIVE | DS5319 VOH vs SCHS052D VIH | VERIFIED INTERFACE INCOMPATIBILITY — owner decision required; no option selected. Separate 5V→ADC sense exposure mitigation is required before 5 V T-G4-05/06 runs |
+| C-20b | CD4067 5 V path: conditional STM32 VOH(VDD) vs CD4067 VIH 3.5 V | HIGH | DS5319 Table 37 + Table 9; SCHS052D; RX50 project_state.md | EVIDENCE GAP — source arithmetic is valid conditionally, but RX50 3.3 V logic rail is baseline-only/not locked; owner VDD evidence required before promotion. Separate 5V→ADC sense exposure mitigation remains required before 5 V T-G4-05/06 runs |
 | C-20c | Measured leakage regime at 3.3/5 V unknown (datasheet bounds at 18 V condition only) | — | no measured data | MEASUREMENT REQUIRED — T-G4-05 physical results and owner acceptance limit absent |
 
 ## Resolved / closed (do not reopen without new evidence)
@@ -41,4 +41,4 @@
 
 - **C-05:** `RX50_G4_G5_CLOSURE_AUDIT.md` §13 and `RX50_S03_OUTPUT_LOGIC.sch` establish 3 mandatory SR signals plus optional `SRCLR`; `OE` is interlock-owned. `RX50_G5_PIN_MAP_FINAL.md` and `RX50_SCHEMATIC_NET_REGISTER.md` establish that final pin allocation remains unregistered and not locked.
 - **C-06:** `RX50_G4_G5_CLOSURE_AUDIT.md` §16/E-06 and `RX50_G9_FIRMWARE_AND_CROSS_GATE_REPORT.md` §5.2/§7 classify USART RX as NVIC `RXNE`; EXTI is for external sources such as DIO0 and fault/arm. The former EXTI wording is retained as historical provenance only; C-06 is not simultaneously OPEN.
-- **C-20b/C-20c/C-21:** detailed closure, decision matrix, measurement requirements, and verification invariants are in `PHASE2_EVIDENCE_CLOSURE.md`.
+- **C-20b/C-20c/C-21:** detailed closure, decision matrix, measurement requirements, and verification invariants are in `PHASE2_EVIDENCE_CLOSURE.md`; C-20b remains an evidence gap until RX50 MCU VDD is authoritative/locked.

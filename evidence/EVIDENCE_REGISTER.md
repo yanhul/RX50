@@ -15,7 +15,7 @@
 | EV-05 | STM32F103 ADC accuracy | ±2 LSB max ET guaranteed ONLY when RAIN <10 kΩ | DS5319 | VERIFIED |
 | EV-06 | STM32F103 VREF+ on LQFP48 | internally tied to VDDA | DS5319 | VERIFIED |
 | EV-07 | STM32F103 ADC count / channels | 2x 12-bit ADC, 10 external (PA0-7, PB0, PB1) | DS5319 | VERIFIED |
-| EV-08 | STM32F103 output levels | VOH = VDD-0.4 (specified condition); VOL row NEEDS RECHECK | DS5319 | VERIFIED / partial |
+| EV-08 | STM32F103 CMOS GPIO VOH source fields | Table 37 VOH(min) = VDD−0.4 V for an I/O pin when 8 pins are sourced at the same time; the VOH row condition is 2.7 V < VDD < 3.6 V. Table 9 gives the general device VDD operating envelope 2.0–3.6 V. Table 37 states that, unless otherwise specified, output-voltage parameters use the ambient-temperature and VDD conditions summarized in Table 9; footnote 3 requires sourced I/O current to remain within Table 7 absolute limits and total IVDD. The 2.0–3.6 V device envelope must NOT be substituted for the narrower 2.7–3.6 V VOH guarantee row. | ST DS5319 Rev 20 Table 9, Table 37 §5.3.13 | VERIFIED; source fields pinned; RX50 operating-point VDD remains a separate project-evidence requirement |
 | EV-09 | STM32F103 USART1 | 4.5 Mbit/s @ VDD=3.3 V (NOT 10 Mbps) | DS5319 | VERIFIED (C-03 source) |
 | EV-10 | CD4067 RON @5/10/15 V 25 °C | 1050 / 400 / 240 Ω max | TI SCHS052D Rev D | VERIFIED |
 | EV-11 | CD4067 RON @3.3 V | NOT SPECIFIED by TI | SCHS052D | VERIFIED (absence) |
@@ -66,7 +66,7 @@
 |---|---|---|---|
 | EV-50 | SN74HC595 MCU control requires 3 mandatory signals (SER/SRCLK/RCLK) plus optional SRCLR; OE is hardware-interlock-owned, not an MCU GPIO | `RX50_G4_G5_CLOSURE_AUDIT.md` §13; `schematic/RX50_S03_OUTPUT_LOGIC.sch` | VERIFIED; final MCU pin allocation remains OPEN because G5 is not locked |
 | EV-51 | USART RX is handled by NVIC USART RXNE; USART RX is not an EXTI source in the RX50 architectural model | `RX50_G4_G5_CLOSURE_AUDIT.md` §16/E-06; `RX50_G9_FIRMWARE_AND_CROSS_GATE_REPORT.md` §5.2 and §7 | VERIFIED; C-06 resolved |
-| EV-52 | C-20b is a verified interface incompatibility when CD4067 is at 5 V: STM32 VOH guarantee 2.9 V at 3.3 V is below CD4067 VIH requirement 3.5 V | `evidence/EVIDENCE_REGISTER.md` EV-08/EV-12; `RX50_G4_G5_CLOSURE_AUDIT.md` S-14/S-15 | VERIFIED; owner decision required; no option selected |
+| EV-52 | C-20b source relation is conditional: DS5319 supports VOH(min)=VDD−0.4 V for 8 sourced pins and CD4067 VIH@5 V is 3.5 V, but RX50 project_state.md leaves the 3.3 V logic rail BASELINE ONLY / NEEDS RECHECK — NOT locked; EV-09's 3.3 V USART condition does not prove the RX50 GPIO operating point | `evidence/EVIDENCE_REGISTER.md` EV-08/EV-09/EV-12; `harness/state/project_state.md`; `RX50_G4_G5_CLOSURE_AUDIT.md` S-14/S-15 | EVIDENCE GAP; lock project VDD before promoting C-20b |
 | EV-53 | No authoritative SN74HC595 timing guarantee at the RX50 3.3 V operating point is present; interpolation is not a guaranteed specification | `RX50_G4_G5_CLOSURE_AUDIT.md` §13; `harness/state/CONTRADICTION_REGISTER.md` C-21 | EVIDENCE GAP |
 | EV-54 | No physical CD4067 leakage results at 3.3 V or 5 V exist; 18 V datasheet bounds cannot be transferred to RX50 operating conditions | `harness/templates/T-G4-05_LEAKAGE_CHARACTERIZATION.md` §§1, 9–12; contradiction register C-20c | MEASUREMENT REQUIRED |
 | EV-55 | G5 final MCU pin allocation and schematic net register are not authoritative/locked | `RX50_G5_PIN_MAP_FINAL.md`; `RX50_SCHEMATIC_NET_REGISTER.md` | VERIFIED; C-05 remains OPEN |

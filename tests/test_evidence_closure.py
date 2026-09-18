@@ -52,28 +52,58 @@ def test_c06_is_canonical_architecture_not_magic_string_only():
     assert "USART" in c06 and "RXNE" in c06
 
 
-def test_c20b_is_a_numeric_predicate_with_evidence_lineage():
+def test_c20b_is_source_derived_and_fails_closed_without_project_vdd():
     ev08 = _row(EVIDENCE, "EV-08")
     ev12 = _row(EVIDENCE, "EV-12")
-    assert "VOH = VDD-0.4" in ev08
-    assert "VIH @5 V" in ev12 and "3.5 V" in ev12
+    project_state = (ROOT / "harness" / "state" / "project_state.md").read_text()
 
-    assert re.search(r"at 3\.3 V", CLOSURE)
-    voh = 3.3 - 0.4
-    vih = 3.5
-    assert voh < vih
+    # Parse semantic source fields, not presentation wording.
+    voh_match = re.search(r"VOH\(min\)\s*=\s*VDD\s*[−-]\s*([0-9]+(?:\.[0-9]+)?)\s*V", ev08)
+    source_vdd_match = re.search(
+        r"(?:standard VDD\s*=\s*|general device VDD operating envelope\s*)([0-9]+(?:\.[0-9]+)?)\s*[–-]\s*([0-9]+(?:\.[0-9]+)?)\s*V",
+        ev08,
+    )
+    pins_match = re.search(r"when\s+(\d+)\s+pins\s+are\s+sourced", ev08)
+    voh_condition_match = re.search(r"VOH row condition is\s+([0-9.]+) V < VDD < ([0-9.]+) V", ev08)
+    vih_match = re.search(r"VIH @5 V\s*\|\s*([0-9]+(?:\.[0-9]+)?)\s*V", ev12)
+
+    assert voh_match, "EV-08 must expose a parseable VOH(min) source relation"
+    assert source_vdd_match, "EV-08 must expose the Table 9 VDD source envelope"
+    assert pins_match and int(pins_match.group(1)) == 8
+    assert voh_condition_match
+    assert vih_match and float(vih_match.group(1)) == 3.5
+
+    delta = float(voh_match.group(1))
+    source_vdd_min = float(source_vdd_match.group(1))
+    source_vdd_max = float(source_vdd_match.group(2))
+    voh_vdd_min = float(voh_condition_match.group(1))
+    voh_vdd_max = float(voh_condition_match.group(2))
+    vih = float(vih_match.group(1))
+    assert delta == 0.4
+    assert source_vdd_min == 2.0
+    assert source_vdd_max == 3.6
+    assert voh_vdd_min == 2.7
+    assert voh_vdd_max == 3.6
+
+    # Critical fail-closed boundary: EV-09's 3.3 V USART condition must not
+    # be treated as proof that the RX50 GPIO supply is 3.3 V.
+    assert "3.3 V logic rail" in project_state
+    assert "BASELINE ONLY / NEEDS RECHECK" in project_state
+    assert "NOT locked" in project_state
 
     ev52 = _row(EVIDENCE, "EV-52")
-    assert "2.9 V" in ev52 and "3.5 V" in ev52
-    assert "VERIFIED" in ev52
+    assert "EVIDENCE GAP" in ev52
+    assert "operating point" in ev52.lower()
+    assert ("EV-09" not in ev52) or ("does not prove" in ev52.lower())
 
     c20b = _classification_row(REGISTER, "C-20b")
-    assert "VERIFIED INTERFACE INCOMPATIBILITY" in c20b
-    assert "owner decision required" in c20b.lower()
-    assert "no option selected" in c20b.lower()
-    assert "VOH guaranteed < VIH required" in CLOSURE
+    assert "EVIDENCE GAP" in c20b
+    assert "3.3 V" in c20b
+    assert "not locked" in c20b.lower()
+    assert "VERIFIED INTERFACE INCOMPATIBILITY" not in c20b
 
-
+    assert "conditional incompatibility" in CLOSURE.lower()
+    assert "cannot be promoted" in CLOSURE.lower()
 def test_c20c_cannot_be_verified_without_level4_measurement():
     level4 = EVIDENCE.split("## Level-4 measurements", 1)[1]
     assert "none exist yet" in level4.lower()
@@ -102,6 +132,6 @@ def test_c21_cannot_be_verified_by_interpolation():
 def test_phase2_topology_and_hardware_validation_remain_fail_closed():
     assert "Topology:** NOT LOCKED." in CLOSURE
     assert "Physically measured:** none" in CLOSURE
-    assert "does not select a remedy" in CLOSURE
+    assert "No remedy is selected." in CLOSURE
     assert "RON@3.3V NOT SPECIFIED" in AUDIT
     assert "pin allocation" in CLOSURE and "unresolved" in CLOSURE.lower()

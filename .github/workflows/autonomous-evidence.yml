@@ -2,6 +2,9 @@ name: RX50 Autonomous Evidence Loop
 
 on:
   push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   schedule:
     - cron: '0 */6 * * *'
   workflow_dispatch:
@@ -14,6 +17,9 @@ concurrency:
   group: rx50-autonomous-evidence
   cancel-in-progress: false
 
+env:
+  RX50_STATE_BRANCH: automation/rx50-state
+
 jobs:
   evidence-loop:
     runs-on: ubuntu-latest
@@ -22,6 +28,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Load isolated durable state
+        run: |
+          set -euo pipefail
+          git fetch origin "${RX50_STATE_BRANCH}"
+          git rev-parse "origin/${RX50_STATE_BRANCH}" > /tmp/rx50-state-base
+          git checkout "origin/${RX50_STATE_BRANCH}" -- \
+            state/controller_state.json \
+            harness/lineage/records.jsonl
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -44,22 +59,37 @@ jobs:
       - name: Run AIOS runtime adversarial conformance
         run: python harness/adversarial_conformance.py
 
+      - name: Run Gate 2 lineage boundary tests
+        run: python -m pytest -q tests/test_gate2_lineage_boundary.py tests/test_evidence_closure.py tests/test_controller.py tests/test_ci_persistence_boundary.py
+
       - name: Run regression tests
         run: python -m pytest -q
 
-      - name: Persist controller checkpoint and lineage
+      - name: Persist isolated controller state
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
+          set -euo pipefail
+          cp state/controller_state.json /tmp/controller_state.json
+          cp harness/lineage/records.jsonl /tmp/records.jsonl
+
+          git checkout --detach "origin/${RX50_STATE_BRANCH}"
+          cp /tmp/controller_state.json state/controller_state.json
+          cp /tmp/records.jsonl harness/lineage/records.jsonl
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add state/controller_state.json harness/lineage/records.jsonl
+
           if git diff --cached --quiet; then
             echo "No controller or lineage state change."
-          else
-            git commit -m "harness: persist RX50 controller and lineage checkpoint [skip ci]"
-            git fetch origin main
-            git rebase origin/main
-            git push origin HEAD:main
+            exit 0
           fi
+
+          git commit -m "harness: persist RX50 controller and lineage checkpoint [skip ci]"
+
+          expected="$(cat /tmp/rx50-state-base)"
+          git push --force-with-lease="refs/heads/${RX50_STATE_BRANCH}:${expected}" \
+            origin "HEAD:${RX50_STATE_BRANCH}"
 
       - name: Publish checkpoint artifact
         uses: actions/upload-artifact@v4
