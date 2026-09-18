@@ -68,16 +68,16 @@ def test_c20b_is_source_derived_and_fails_closed_without_project_vdd():
 
     assert voh_match, "EV-08 must expose a parseable VOH(min) source relation"
     assert source_vdd_match, "EV-08 must expose the Table 9 VDD source envelope"
-    assert pins_match and int(pins_match.group(1)) == 8
+    assert pins_match and int(pins_match.group(1)) == 8\n    assert voh_condition_match
     assert vih_match and float(vih_match.group(1)) == 3.5
 
     delta = float(voh_match.group(1))
     source_vdd_min = float(source_vdd_match.group(1))
-    source_vdd_max = float(source_vdd_match.group(2))
+    source_vdd_max = float(source_vdd_match.group(2))\n    voh_vdd_min = float(voh_condition_match.group(1))\n    voh_vdd_max = float(voh_condition_match.group(2))
     vih = float(vih_match.group(1))
     assert delta == 0.4
     assert source_vdd_min == 2.0
-    assert source_vdd_max == 3.6
+    assert source_vdd_max == 3.6\n    assert voh_vdd_min == 2.7\n    assert voh_vdd_max == 3.6
 
     # Critical fail-closed boundary: EV-09's 3.3 V USART condition must not
     # be treated as proof that the RX50 GPIO supply is 3.3 V.
