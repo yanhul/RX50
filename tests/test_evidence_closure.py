@@ -54,6 +54,7 @@ def test_c06_is_canonical_architecture_not_magic_string_only():
 
 def test_c20b_is_a_numeric_predicate_with_evidence_lineage():
     ev08 = _row(EVIDENCE, "EV-08")
+    ev09 = _row(EVIDENCE, "EV-09")
     ev12 = _row(EVIDENCE, "EV-12")
     assert "VOH = VDD-0.4" in ev08
     assert "Table 37" in ev08
@@ -61,13 +62,35 @@ def test_c20b_is_a_numeric_predicate_with_evidence_lineage():
     assert "2.7 V < VDD < 3.6 V" in ev08
     assert "VIH @5 V" in ev12 and "3.5 V" in ev12
 
-    assert re.search(r"at 3\.3 V", CLOSURE)
-    voh = 3.3 - 0.4
-    vih = 3.5
+    # Derive the operating point from authoritative evidence, not closure
+    # prose and not a duplicated test constant. EV-09 supplies VDD=3.3 V;
+    # EV-08 independently supplies the VDD condition covering that point.
+    vdd_match = re.search(r"VDD\s*=\s*([0-9]+(?:\.[0-9]+)?)\s*V", ev09)
+    assert vdd_match, "EV-09 must provide the authoritative MCU VDD operating point"
+    vdd = float(vdd_match.group(1))
+
+    voh_delta_match = re.search(r"VOH\s*=\s*VDD\s*-\s*([0-9]+(?:\.[0-9]+)?)", ev08)
+    voh_range_match = re.search(
+        r"([0-9]+(?:\.[0-9]+)?)\s*V\s*<\s*VDD\s*<\s*([0-9]+(?:\.[0-9]+)?)\s*V",
+        ev08,
+    )
+    vih_match = re.search(r"VIH @5 V\s*\|\s*([0-9]+(?:\.[0-9]+)?)\s*V", ev12)
+    assert voh_delta_match, "EV-08 must expose the authoritative VOH delta"
+    assert voh_range_match, "EV-08 must expose the authoritative VDD condition"
+    assert vih_match, "EV-12 must expose the authoritative VIH value"
+    vdd_min = float(voh_range_match.group(1))
+    vdd_max = float(voh_range_match.group(2))
+    assert vdd_min < vdd < vdd_max
+    voh = vdd - float(voh_delta_match.group(1))
+    vih = float(vih_match.group(1))
     assert voh < vih
 
     ev52 = _row(EVIDENCE, "EV-52")
-    assert "2.9 V" in ev52 and "3.5 V" in ev52
+    ev52_voh = re.search(r"VOH guarantee\s*([0-9]+(?:\.[0-9]+)?)\s*V", ev52)
+    ev52_vih = re.search(r"VIH requirement\s*([0-9]+(?:\.[0-9]+)?)\s*V", ev52)
+    assert ev52_voh and ev52_vih
+    assert float(ev52_voh.group(1)) == voh
+    assert float(ev52_vih.group(1)) == vih
     assert "VERIFIED" in ev52
 
     c20b = _classification_row(REGISTER, "C-20b")
@@ -75,7 +98,6 @@ def test_c20b_is_a_numeric_predicate_with_evidence_lineage():
     assert "owner decision required" in c20b.lower()
     assert "no option selected" in c20b.lower()
     assert "VOH guaranteed < VIH required" in CLOSURE
-
 
 def test_c20c_cannot_be_verified_without_level4_measurement():
     level4 = EVIDENCE.split("## Level-4 measurements", 1)[1]
