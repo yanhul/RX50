@@ -60,7 +60,7 @@ def test_c20b_is_source_derived_and_fails_closed_without_project_vdd():
     # Parse semantic source fields, not presentation wording.
     voh_match = re.search(r"VOH\(min\)\s*=\s*VDD\s*[−-]\s*([0-9]+(?:\.[0-9]+)?)\s*V", ev08)
     source_vdd_match = re.search(
-        r"standard VDD\s*=\s*([0-9]+(?:\.[0-9]+)?)\s*[–-]\s*([0-9]+(?:\.[0-9]+)?)\s*V",
+        r"(?:standard VDD\s*=\s*|general device VDD operating envelope\s*)([0-9]+(?:\.[0-9]+)?)\s*[–-]\s*([0-9]+(?:\.[0-9]+)?)\s*V",
         ev08,
     )
     pins_match = re.search(r"when\s+(\d+)\s+pins\s+are\s+sourced", ev08)
