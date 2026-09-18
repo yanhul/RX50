@@ -15,7 +15,7 @@
 | EV-05 | STM32F103 ADC accuracy | ±2 LSB max ET guaranteed ONLY when RAIN <10 kΩ | DS5319 | VERIFIED |
 | EV-06 | STM32F103 VREF+ on LQFP48 | internally tied to VDDA | DS5319 | VERIFIED |
 | EV-07 | STM32F103 ADC count / channels | 2x 12-bit ADC, 10 external (PA0-7, PB0, PB1) | DS5319 | VERIFIED |
-| EV-08 | STM32F103 CMOS GPIO VOH guarantee | Table 37 gives VOH(min) = VDD−0.4 V for a CMOS output high level when 8 pins are sourced simultaneously; Table 37 output-voltage parameters are tested under the ambient-temperature and VDD conditions of Table 9, and the row explicitly covers 2.7 V < VDD < 3.6 V. Table 9 defines STM32F103 standard VDD operating range as 2.0–3.6 V. | ST DS5319 Rev 20 Table 9 and Table 37 §5.3.13 | VERIFIED; source conditions captured |
+| EV-08 | STM32F103 CMOS GPIO VOH source fields | Table 37 VOH(min) = VDD−0.4 V for an I/O pin when 8 pins are sourced at the same time; Table 37 states that, unless otherwise specified, output-voltage parameters use the ambient-temperature and VDD conditions summarized in Table 9. Table 9 gives standard VDD = 2.0–3.6 V. The VOH row itself has no separate IIO condition; footnote 3 requires sourced I/O current to remain within Table 7 absolute limits and total IVDD. | ST DS5319 Rev 20 Table 9, Table 37 §5.3.13 | VERIFIED; source fields captured; RX50 operating-point VDD remains a separate project-evidence requirement |
 | EV-09 | STM32F103 USART1 | 4.5 Mbit/s @ VDD=3.3 V (NOT 10 Mbps) | DS5319 | VERIFIED (C-03 source) |
 | EV-10 | CD4067 RON @5/10/15 V 25 °C | 1050 / 400 / 240 Ω max | TI SCHS052D Rev D | VERIFIED |
 | EV-11 | CD4067 RON @3.3 V | NOT SPECIFIED by TI | SCHS052D | VERIFIED (absence) |
