@@ -60,9 +60,45 @@ jobs:
       - name: Run AIOS runtime adversarial conformance
         run: python harness/adversarial_conformance.py
 
-      - name: Diagnose Gate 2 lineage tests
+      - name: Gate2 lineage_without_evaluation_is_observation_only
         continue-on-error: true
-        run: python -m pytest -q tests/test_gate2_lineage_boundary.py
+        run: python -m pytest -q tests/test_gate2_lineage_boundary.py::test_lineage_without_evaluation_is_observation_only
+
+      - name: Gate2 effect_attempt_receipt_bindings_are_explicit_unknown_when_absent
+        continue-on-error: true
+        run: python -m pytest -q tests/test_gate2_lineage_boundary.py::test_effect_attempt_receipt_bindings_are_explicit_unknown_when_absent
+
+      - name: Gate2 missing_receipt_cannot_support_verified_pass
+        continue-on-error: true
+        run: python -m pytest -q tests/test_gate2_lineage_boundary.py::test_missing_receipt_cannot_support_verified_pass
+
+      - name: Gate2 fake_top_level_verdict_is_rejected
+        continue-on-error: true
+        run: python -m pytest -q tests/test_gate2_lineage_boundary.py::test_fake_top_level_verdict_is_rejected
+
+      - name: Gate2 fake_evaluation_verdict_is_rejected
+        continue-on-error: true
+        run: python -m pytest -q tests/test_gate2_lineage_boundary.py::test_fake_evaluation_verdict_is_rejected
+
+      - name: Gate2 execution_failure_after_observation_cannot_be_promoted_to_pass
+        continue-on-error: true
+        run: python -m pytest -q tests/test_gate2_lineage_boundary.py::test_execution_failure_after_observation_cannot_be_promoted_to_pass
+
+      - name: Gate2 known_receipt_requires_effect_and_attempt
+        continue-on-error: true
+        run: python -m pytest -q tests/test_gate2_lineage_boundary.py::test_known_receipt_requires_effect_and_attempt
+
+      - name: Gate2 old_state_plus_new_controller_fails_closed
+        continue-on-error: true
+        run: python -m pytest -q tests/test_gate2_lineage_boundary.py::test_old_state_plus_new_controller_fails_closed
+
+      - name: Gate2 state_schema_mismatch_fails_closed
+        continue-on-error: true
+        run: python -m pytest -q tests/test_gate2_lineage_boundary.py::test_state_schema_mismatch_fails_closed
+
+      - name: Gate2 policy_mismatch_fails_closed
+        continue-on-error: true
+        run: python -m pytest -q tests/test_gate2_lineage_boundary.py::test_policy_mismatch_fails_closed
 
       - name: Diagnose Phase 2 evidence tests
         continue-on-error: true
