@@ -12,6 +12,7 @@ on:
 permissions:
   contents: write
   actions: read
+  pull-requests: write
 
 concurrency:
   group: rx50-autonomous-evidence
@@ -70,6 +71,26 @@ jobs:
       - name: Diagnose full Gate 2 suite
         continue-on-error: true
         run: python -m pytest -q tests/test_gate2_lineage_boundary.py tests/test_evidence_closure.py tests/test_controller.py tests/test_ci_persistence_boundary.py
+
+      - name: Diagnose all regression files
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          {
+            for f in tests/test_*.py; do
+              case "$f" in
+                tests/test_gate2_lineage_boundary.py|tests/test_evidence_closure.py|tests/test_controller.py|tests/test_ci_persistence_boundary.py) continue ;;
+              esac
+              echo "===== $f ====="
+              python -m pytest -q "$f"
+              echo "exit=$?"
+            done
+          } > /tmp/regression-diagnosis.log 2>&1
+          gh pr comment ${{ github.event.pull_request.number }} --body "```
+$(cat /tmp/regression-diagnosis.log)
+```"
 
       - name: Run regression tests
         run: python -m pytest -q
