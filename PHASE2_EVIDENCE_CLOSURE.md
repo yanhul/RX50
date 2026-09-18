@@ -40,9 +40,11 @@ The datasheet values recorded in the repository are conditions/bounds, not RX50 
 
 ## C-20b — logic-level contradiction and owner packet
 
-**Old state → new state:** `CONTRADICTION — resolution required; underlying source was described as absent` → `VERIFIED INTERFACE INCOMPATIBILITY — owner decision required; topology not selected`.
+**Old state → new state:** `CONTRADICTION — resolution required; underlying source was described as absent` → `EVIDENCE GAP — conditional incompatibility is source-derived, but RX50 VDD operating point is not locked`.
 
-Repository evidence records STM32 VOH minimum as `VDD - 0.4 V` under the cited condition, giving 2.9 V at 3.3 V, and CD4067 VIH at 5 V as 3.5 V. Therefore `VOH guaranteed < VIH required`; direct 3.3 V MCU drive cannot be guaranteed to meet a 5 V CD4067 input. This establishes an interface incompatibility, not merely an open research question. It does not select a remedy. The separate 5 V-referenced sense-node-to-ADC exposure remains an independent owner mitigation decision and must be closed before any 5 V fixture run.
+DS5319 Rev 20 supports the source relation `VOH(min) = VDD−0.4 V` for an I/O pin when 8 pins are sourced simultaneously, with output-voltage parameters tied to the Table 9 operating-condition envelope. CD4067 VIH at 5 V is 3.5 V. The arithmetic `VOH < VIH` is therefore a valid conditional calculation at any project VDD for which the source condition applies and `VDD−0.4 < 3.5`. However, RX50 `project_state.md` explicitly classifies the 3.3 V logic rail as **BASELINE ONLY / NEEDS RECHECK — NOT locked**. EV-09's 3.3 V USART operating point is device-datasheet evidence, not evidence that the RX50 GPIO supply is locked at 3.3 V.
+
+Therefore the repository does **not** currently prove that the actual RX50 operating point is 3.3 V. The conditional incompatibility is source-derived, but C-20b cannot be promoted to a verified RX50 interface incompatibility until an authoritative project/owner evidence item locks the MCU VDD operating point. No remedy is selected. The separate 5 V-referenced sense-node-to-ADC exposure remains an independent owner mitigation decision.
 
 ### Decision matrix — no winner selected
 
@@ -63,7 +65,7 @@ Repository evidence records STM32 VOH minimum as `VDD - 0.4 V` under the cited c
 | C-06 | VERIFIED / RESOLVED | Regression invariant and canonical audit/G9 provenance |
 | C-21 | EVIDENCE GAP | 3.3 V manufacturer guarantee or reproducible measurement |
 | C-20c | MEASUREMENT REQUIRED | Physical T-G4-05 results at intended conditions plus owner limit |
-| C-20b | VERIFIED INTERFACE INCOMPATIBILITY / DECISION REQUIRED | Owner selects and authorizes an option and separately closes ADC exposure |
+| C-20b | EVIDENCE GAP | Lock RX50 MCU VDD operating point; then re-evaluate the source-derived VOH < VIH predicate and owner decision path |
 
 ## Topology and hardware validation
 
@@ -77,4 +79,4 @@ Repository evidence records STM32 VOH minimum as `VDD - 0.4 V` under the cited c
 
 **Physically measured:** none for C-20c, C-21, or the RX50 circuit. No physical validation claim is made.
 
-**Still unknown:** C-05 final pins, C-21 3.3 V guarantee, C-20c operating-point leakage, C-20b owner option, ADC exposure mitigation, G1/G2 load envelope, and all owner acceptance thresholds.
+**Still unknown:** C-05 final pins, C-21 3.3 V guarantee, C-20c operating-point leakage, C-20b RX50 MCU VDD operating point and owner option, ADC exposure mitigation, G1/G2 load envelope, and all owner acceptance thresholds.
