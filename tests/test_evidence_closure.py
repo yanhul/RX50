@@ -60,7 +60,7 @@ def test_c20b_is_a_numeric_predicate_with_evidence_lineage():
 
     # Derive the predicate from the authoritative evidence rows; do not
     # duplicate the source values as independent test constants.
-    vdd_match = re.search(r"at\\s+([0-9]+(?:\\.[0-9]+)?)\\s*V", CLOSURE)
+    vdd_match = re.search(r"at\\s+([0-9]+(?:\\.[0-9]+)?)\\s*V\\b", CLOSURE)
     assert vdd_match, "closure must identify the operating point"
     vdd = float(vdd_match.group(1))
     assert vdd == 3.3
