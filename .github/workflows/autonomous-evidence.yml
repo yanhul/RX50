@@ -1,4 +1,5 @@
 name: RX50 Autonomous Evidence Loop
+# Gate 2 exact-head diagnostic: targeted boundary tests run before full regression.
 
 on:
   push:
