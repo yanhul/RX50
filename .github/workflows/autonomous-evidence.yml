@@ -59,8 +59,17 @@ jobs:
       - name: Run AIOS runtime adversarial conformance
         run: python harness/adversarial_conformance.py
 
-      - name: Run Gate 2 lineage boundary tests
-        run: python -m pytest -q tests/test_gate2_lineage_boundary.py tests/test_evidence_closure.py tests/test_controller.py tests/test_ci_persistence_boundary.py
+      - name: Diagnose Gate 2 lineage tests
+        continue-on-error: true
+        run: python -m pytest -q tests/test_gate2_lineage_boundary.py
+
+      - name: Diagnose Phase 2 evidence tests
+        continue-on-error: true
+        run: python -m pytest -q tests/test_evidence_closure.py
+
+      - name: Diagnose controller and CI boundary tests
+        continue-on-error: true
+        run: python -m pytest -q tests/test_controller.py tests/test_ci_persistence_boundary.py
 
       - name: Run regression tests
         run: python -m pytest -q
