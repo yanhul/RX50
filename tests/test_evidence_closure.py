@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTER = (ROOT / "harness" / "state" / "CONTRADICTION_REGISTER.md").read_text()
@@ -8,32 +9,97 @@ G5 = (ROOT / "RX50_G5_PIN_MAP_FINAL.md").read_text()
 NETS = (ROOT / "RX50_SCHEMATIC_NET_REGISTER.md").read_text()
 OUTPUT = (ROOT / "schematic" / "RX50_S03_OUTPUT_LOGIC.sch").read_text()
 G9 = (ROOT / "RX50_G9_FIRMWARE_AND_CROSS_GATE_REPORT.md").read_text()
+EVIDENCE = (ROOT / "evidence" / "EVIDENCE_REGISTER.md").read_text()
 
 
-def test_sr_control_count_and_oe_authority_are_fail_closed():
-    assert "three mandatory MCU-controlled signals" in CLOSURE
-    assert "`SER`, `SRCLK`, `RCLK`" in CLOSURE
+def _row(doc: str, evidence_id: str) -> str:
+    return next((x for x in doc.splitlines() if x.startswith(f"| {evidence_id} |")), "")
+
+
+def _classification_row(doc: str, item: str) -> str:
+    return next((x for x in doc.splitlines() if x.startswith(f"| {item} |")), "")
+
+
+def test_c05_is_source_derived_and_fail_closed():
+    required = {"SER", "SRCLK", "RCLK"}
+    optional = {"SRCLR"}
+    actual = set(re.findall(r"\b(?:SER|SRCLK|RCLK|SRCLR)\b", OUTPUT))
+    assert required <= actual
+    assert optional <= actual
     assert "OE is hardware-interlock-owned" in OUTPUT
-    assert "C-05" in REGISTER and "OPEN" in REGISTER
+
+    ev50 = _row(EVIDENCE, "EV-50")
+    assert "3 mandatory signals" in ev50 and "SER/SRCLK/RCLK" in ev50
+    assert "OE" in ev50 and "hardware" in ev50.lower()
+    assert "C-05" in REGISTER
+    assert "OPEN — signal count corrected to 3-4" in _classification_row(REGISTER, "C-05")
+    assert "final MCU pin allocation" in _classification_row(REGISTER, "C-05")
     assert "pin allocation unresolved" in CLOSURE
     assert "NOT LOCKED" in G5
     assert "Nets registered: 0" in NETS
 
 
-def test_usart_rx_is_nvic_not_exti_and_c06_is_unambiguous():
-    assert "USART RXNE" in G9
+def test_c06_is_canonical_architecture_not_magic_string_only():
+    rx_lines = [x for x in G9.splitlines() if "USART" in x and ("RXNE" in x or "EXTI" in x)]
+    assert any("RXNE" in x for x in rx_lines)
     assert "USART RX uses NVIC USART RXNE" in CLOSURE
-    c06 = next(line for line in REGISTER.splitlines() if line.startswith("| C-06 |"))
+
+    c06 = _classification_row(REGISTER, "C-06")
     assert "RESOLVED" in c06
     assert "OPEN" not in c06
+    assert "historical EXTI wording" in REGISTER
 
 
-def test_phase2_preserves_unknown_measurement_and_topology_gates():
-    assert "C-21" in REGISTER and "EVIDENCE GAP" in REGISTER
-    assert "C-20c" in REGISTER and "MEASUREMENT REQUIRED" in REGISTER
-    assert "C-20b" in REGISTER and "VERIFIED INTERFACE INCOMPATIBILITY" in REGISTER
+def test_c20b_is_a_numeric_predicate_with_evidence_lineage():
+    ev08 = _row(EVIDENCE, "EV-08")
+    ev12 = _row(EVIDENCE, "EV-12")
+    assert "VOH = VDD-0.4" in ev08
+    assert "VIH @5 V" in ev12 and "3.5 V" in ev12
+
+    assert re.search(r"at 3\.3 V", CLOSURE)
+    voh = 3.3 - 0.4
+    vih = 3.5
+    assert voh < vih
+
+    ev52 = _row(EVIDENCE, "EV-52")
+    assert "2.9 V" in ev52 and "3.5 V" in ev52
+    assert "VERIFIED" in ev52
+
+    c20b = _classification_row(REGISTER, "C-20b")
+    assert "VERIFIED INTERFACE INCOMPATIBILITY" in c20b
+    assert "owner decision required" in c20b.lower()
+    assert "no option selected" in c20b.lower()
+    assert "VOH guaranteed < VIH required" in CLOSURE
+
+
+def test_c20c_cannot_be_verified_without_level4_measurement():
+    level4 = EVIDENCE.split("## Level-4 measurements", 1)[1]
+    assert "none exist yet" in level4.lower()
+    for evidence_id in ("EV-30", "EV-31", "EV-32", "EV-33"):
+        assert "MEASUREMENT PENDING" in _row(EVIDENCE, evidence_id)
+
+    c20c = _classification_row(REGISTER, "C-20c")
+    assert "MEASUREMENT REQUIRED" in c20c
+    assert "no measured data" in c20c.lower() or "physical" in c20c.lower()
+    assert "No pass/fail conclusion is permitted" in CLOSURE
+    assert "18 V maximum/bound must not be transferred to 3.3 V or 5 V" in CLOSURE
+
+
+def test_c21_cannot_be_verified_by_interpolation():
+    ev18 = _row(EVIDENCE, "EV-18")
+    ev53 = _row(EVIDENCE, "EV-53")
+    assert "4.5 V" in ev18
+    assert "3.3 V" in ev53 and "EVIDENCE GAP" in ev53
+
+    c21 = _classification_row(REGISTER, "C-21")
+    assert "EVIDENCE GAP" in c21
+    assert "interpolation is not a guarantee" in c21.lower()
+    assert "3.3 V manufacturer guarantee or reproducible measurement" in CLOSURE
+
+
+def test_phase2_topology_and_hardware_validation_remain_fail_closed():
+    assert "Topology:** NOT LOCKED." in CLOSURE
+    assert "Physically measured:** none" in CLOSURE
     assert "does not select a remedy" in CLOSURE
-    assert "Topology:** NOT LOCKED" in CLOSURE
-    assert "physically measured:** none" in CLOSURE.lower()
-    assert "interpolation is not a guaranteed" in CLOSURE.lower()
     assert "RON@3.3V NOT SPECIFIED" in AUDIT
+    assert "final pin allocation" in CLOSURE
