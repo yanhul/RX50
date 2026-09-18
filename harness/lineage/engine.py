@@ -70,10 +70,15 @@ def _validate_evaluation(record: dict) -> None:
     missing = [field for field in EVALUATION_FIELDS if field not in evaluation]
     if missing:
         raise ValueError("evaluation missing fields: " + ",".join(missing))
+    if evaluation["verdict"] not in {"PASS", "FAIL", "BLOCKED", "INCONCLUSIVE", "UNKNOWN"}:
+        raise ValueError("unsupported evaluation verdict")
     if evaluation["verdict"] == "PASS" and not evaluation["evidence_refs"]:
         raise ValueError("PASS evaluation requires evidence_refs")
     if evaluation["verdict"] == "PASS" and not evaluation["test_results"]:
         raise ValueError("PASS evaluation requires test_results")
+    execution = record["observation"].get("execution")
+    if evaluation["verdict"] == "PASS" and execution and execution.get("receipt_id") == "UNKNOWN":
+        raise ValueError("PASS evaluation requires a receipt")
 
 
 def validate_record(record: dict) -> None:
@@ -84,6 +89,10 @@ def validate_record(record: dict) -> None:
         raise ValueError("unsupported lineage schema_version")
     if "verdict" in record:
         raise ValueError("verdict belongs only inside evaluation")
+    if record.get("evaluation", {}).get("verdict") == "PASS":
+        execution = record["observation"].get("execution")
+        if execution and execution.get("status") in {"FAILED", "UNKNOWN"}:
+            raise ValueError("failed or unknown execution cannot have PASS evaluation")
     if not isinstance(record["observation"], dict):
         raise ValueError("observation must be an object")
     _validate_execution(record["observation"].get("execution"))
