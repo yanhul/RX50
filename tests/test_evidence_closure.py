@@ -88,7 +88,7 @@ def test_c20b_is_source_derived_and_fails_closed_without_project_vdd():
     ev52 = _row(EVIDENCE, "EV-52")
     assert "EVIDENCE GAP" in ev52
     assert "operating point" in ev52.lower()
-    assert "EV-09" not in ev52 or "not evidence" in ev52.lower()
+    assert "EV-09" not in ev52 or "does not prove" in ev52.lower()
 
     c20b = _classification_row(REGISTER, "C-20b")
     assert "EVIDENCE GAP" in c20b
