@@ -12,6 +12,7 @@ on:
 permissions:
   contents: write
   actions: read
+  pull-requests: write
 
 concurrency:
   group: rx50-autonomous-evidence
@@ -72,7 +73,34 @@ jobs:
         run: python -m pytest -q tests/test_controller.py tests/test_ci_persistence_boundary.py
 
       - name: Run regression tests
+        id: regression
+        continue-on-error: true
         run: python -m pytest -q
+
+      - name: Diagnose remaining regression files
+        if: steps.regression.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          {
+            echo "Gate 2 regression-file diagnosis"
+            for f in tests/test_*.py; do
+              case "$f" in
+                tests/test_gate2_lineage_boundary.py|tests/test_evidence_closure.py|tests/test_controller.py|tests/test_ci_persistence_boundary.py) continue ;;
+              esac
+              echo "===== $f ====="
+              python -m pytest -q "$f"
+              echo "exit=$?"
+            done
+          } > /tmp/regression-diagnosis.log 2>&1
+          gh pr comment ${{ github.event.pull_request.number }} --body "```
+$(cat /tmp/regression-diagnosis.log)
+```"
+
+      - name: Enforce regression result
+        if: steps.regression.outcome == 'failure'
+        run: exit 1
 
       - name: Persist isolated controller state
         if: ${{ github.ref == 'refs/heads/main' }}
