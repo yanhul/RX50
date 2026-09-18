@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "harness"))
 ENGINE_PATH = ROOT / "harness" / "lineage" / "engine.py"
 
 spec = importlib.util.spec_from_file_location("lineage_engine", ENGINE_PATH)
@@ -156,7 +157,6 @@ def test_old_state_plus_new_controller_fails_closed():
     assert "STATE_SCHEMA_VERSION = 2" in controller
     queue = json.loads((ROOT / "state" / "bc_queue.json").read_text())
     old_state = {"iteration": 1, "phase": "YIELD", "terminal": False}
-    # Reproduce the semantic compatibility check against a pre-fence state.
     spec = importlib.util.spec_from_file_location("rx50_controller", ROOT / "harness" / "controller.py")
     mod = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = mod
