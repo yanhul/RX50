@@ -56,6 +56,9 @@ def test_c20b_is_a_numeric_predicate_with_evidence_lineage():
     ev08 = _row(EVIDENCE, "EV-08")
     ev12 = _row(EVIDENCE, "EV-12")
     assert "VOH = VDD-0.4" in ev08
+    assert "Table 37" in ev08
+    assert "8 pins are sourced simultaneously" in ev08
+    assert "2.7 V < VDD < 3.6 V" in ev08
     assert "VIH @5 V" in ev12 and "3.5 V" in ev12
 
     assert re.search(r"at 3\.3 V", CLOSURE)
