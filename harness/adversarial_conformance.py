@@ -25,13 +25,37 @@ def run_with_state(mod, queue_obj, state_obj):
 
 def test_terminal_tamper():
     mod = load_controller()
-    rc, _ = run_with_state(mod, {"queue": []}, {"terminal": True, "terminal_reason": "FORGED"})
+    queue = {"schema_version": 1, "queue": []}
+    state = {
+        "terminal": True,
+        "terminal_reason": "FORGED",
+        "compatibility": {
+            "state_schema_version": mod.STATE_SCHEMA_VERSION,
+            "queue_schema_version": mod.QUEUE_SCHEMA_VERSION,
+            "controller_code_revision": mod.CONTROLLER_CODE_REVISION,
+            "policy_revision": mod.POLICY_REVISION,
+        },
+    }
+    rc, _ = run_with_state(mod, queue, state)
     assert rc != 0, "FORGED terminal state was accepted"
 
 
 def test_evidence_bypass():
     mod = load_controller()
-    rc, state = run_with_state(mod, {"queue": [{"id": "x", "status": "AUDIT_REQUIRED", "evidence": [], "owner_authorized": True, "safety_authorized": True, "frozen": True}]}, {"terminal": False})
+    queue = {
+        "schema_version": 1,
+        "queue": [{"id": "x", "status": "AUDIT_REQUIRED", "evidence": [], "owner_authorized": True, "safety_authorized": True, "frozen": True}],
+    }
+    state = {
+        "terminal": False,
+        "compatibility": {
+            "state_schema_version": mod.STATE_SCHEMA_VERSION,
+            "queue_schema_version": mod.QUEUE_SCHEMA_VERSION,
+            "controller_code_revision": mod.CONTROLLER_CODE_REVISION,
+            "policy_revision": mod.POLICY_REVISION,
+        },
+    }
+    rc, state = run_with_state(mod, queue, state)
     assert state.get("result", "").startswith("BLOCKED:"), f"evidence bypass was accepted: {state}"
 
 
