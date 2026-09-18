@@ -23,7 +23,7 @@ def _classification_row(doc: str, item: str) -> str:
 def test_c05_is_source_derived_and_fail_closed():
     required = {"SER", "SRCLK", "RCLK"}
     optional = {"SRCLR"}
-    actual = set(re.findall(r"\bSR_(?:SER|SRCLK|RCLK|SRCLR)\b", OUTPUT))
+    actual = {m.group(1) for m in re.finditer(r"\bSR_(SER|SRCLK|RCLK|SRCLR)\b", OUTPUT)}
     assert required <= actual
     assert optional <= actual
     assert "OE is hardware-interlock-owned" in OUTPUT
@@ -47,7 +47,8 @@ def test_c06_is_canonical_architecture_not_magic_string_only():
     c06 = _classification_row(REGISTER, "C-06")
     assert "RESOLVED" in c06
     assert "OPEN" not in c06
-    assert "historical EXTI wording" in REGISTER
+    # Resolution must be grounded in the canonical firmware architecture, not a stale wording token.
+    assert "USART" in c06 and "RXNE" in c06
 
 
 def test_c20b_is_a_numeric_predicate_with_evidence_lineage():
