@@ -60,12 +60,12 @@ def test_c20b_is_a_numeric_predicate_with_evidence_lineage():
 
     # Derive the predicate from the authoritative evidence rows; do not
     # duplicate the source values as independent test constants.
-    vdd_match = re.search(r"at\\s+([0-9]+(?:\\.[0-9]+)?)\\s*V\\b", CLOSURE)
+    vdd_match = re.search(r"at\s+([0-9]+(?:\\.[0-9]+)?)\s*V\b", CLOSURE)
     assert vdd_match, "closure must identify the operating point"
     vdd = float(vdd_match.group(1))
     assert vdd == 3.3
-    voh_delta_match = re.search(r"VOH\\s*=\\s*VDD\\s*-\\s*([0-9]+(?:\\.[0-9]+)?)", ev08)
-    vih_match = re.search(r"VIH @5 V\\s*\\|\\s*([0-9]+(?:\\.[0-9]+)?)\\s*V", ev12)
+    voh_delta_match = re.search(r"VOH\s*=\s*VDD\s*-\s*([0-9]+(?:\\.[0-9]+)?)", ev08)
+    vih_match = re.search(r"VIH @5 V\s*\|\s*([0-9]+(?:\\.[0-9]+)?)\\s*V", ev12)
     assert voh_delta_match, "EV-08 must expose the authoritative VOH delta"
     assert vih_match, "EV-12 must expose the authoritative VIH value"
     voh = vdd - float(voh_delta_match.group(1))
@@ -73,8 +73,8 @@ def test_c20b_is_a_numeric_predicate_with_evidence_lineage():
     assert voh < vih
 
     ev52 = _row(EVIDENCE, "EV-52")
-    ev52_voh = re.search(r"VOH guarantee\\s*([0-9]+(?:\\.[0-9]+)?)\\s*V", ev52)
-    ev52_vih = re.search(r"VIH requirement\\s*([0-9]+(?:\\.[0-9]+)?)\\s*V", ev52)
+    ev52_voh = re.search(r"VOH guarantee\s*([0-9]+(?:\\.[0-9]+)?)\\s*V", ev52)
+    ev52_vih = re.search(r"VIH requirement\s*([0-9]+(?:\\.[0-9]+)?)\\s*V", ev52)
     assert ev52_voh and ev52_vih
     assert float(ev52_voh.group(1)) == voh
     assert float(ev52_vih.group(1)) == vih
