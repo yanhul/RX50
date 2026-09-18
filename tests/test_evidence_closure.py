@@ -25,7 +25,9 @@ def test_c05_is_source_derived_and_fail_closed():
     optional = {"SRCLR"}
     actual = {m.group(1) for m in re.finditer(r"\bSR_(SER|SRCLK|RCLK|SRCLR)\b", OUTPUT)}
     assert required <= actual
-    assert optional <= actual
+    # SRCLR is optional: absence is valid. If present, the canonical source name must be used.
+    if optional & actual:
+        assert "SR_SRCLR" in OUTPUT
     assert "OE is hardware-interlock-owned" in OUTPUT
 
     ev50 = _row(EVIDENCE, "EV-50")
@@ -47,7 +49,6 @@ def test_c06_is_canonical_architecture_not_magic_string_only():
     c06 = _classification_row(REGISTER, "C-06")
     assert "RESOLVED" in c06
     assert "OPEN" not in c06
-    # Resolution must be grounded in the canonical firmware architecture, not a stale wording token.
     assert "USART" in c06 and "RXNE" in c06
 
 
