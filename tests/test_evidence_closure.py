@@ -88,7 +88,7 @@ def test_c20b_is_source_derived_and_fails_closed_without_project_vdd():
     ev52 = _row(EVIDENCE, "EV-52")
     assert "EVIDENCE GAP" in ev52
     assert "operating point" in ev52.lower()
-    assert "EV-09" not in ev52 or "does not prove" in ev52.lower()
+    assert ("EV-09" not in ev52) or ("does not prove" in ev52.lower())
 
     c20b = _classification_row(REGISTER, "C-20b")
     assert "EVIDENCE GAP" in c20b
@@ -126,6 +126,6 @@ def test_c21_cannot_be_verified_by_interpolation():
 def test_phase2_topology_and_hardware_validation_remain_fail_closed():
     assert "Topology:** NOT LOCKED." in CLOSURE
     assert "Physically measured:** none" in CLOSURE
-    assert "does not select a remedy" in CLOSURE
+    assert "No remedy is selected." in CLOSURE
     assert "RON@3.3V NOT SPECIFIED" in AUDIT
     assert "pin allocation" in CLOSURE and "unresolved" in CLOSURE.lower()
