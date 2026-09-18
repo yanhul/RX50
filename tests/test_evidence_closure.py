@@ -37,7 +37,7 @@ def test_c05_is_source_derived_and_fail_closed():
 
     # The evidence/state chain must retain explicit provenance and remain unlocked.
     ev50 = _row(EVIDENCE, "EV-50")
-    assert "3 mandatory MCU-controlled" in ev50
+    assert "3 mandatory signals" in ev50 and "SER/SRCLK/RCLK" in ev50
     assert "OE" in ev50 and "hardware" in ev50.lower()
     assert _classification_row(REGISTER, "C-05").endswith("OPEN — signal count corrected to 3-4; final MCU pin allocation still requires owner-approved G5 pin-map evidence")
     assert "pin allocation unresolved" in CLOSURE
