@@ -74,7 +74,22 @@ jobs:
           python -m pytest -q tests/test_gate2_lineage_boundary.py::test_state_schema_mismatch_fails_closed || true
           python -m pytest -q tests/test_gate2_lineage_boundary.py::test_policy_mismatch_fails_closed || true
       - name: Run regression tests
-        run: python -m pytest -q
+        id: regression
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python -m pytest -q 2>&1 | tee /tmp/pytest.log
+
+      - name: Report regression failure
+        if: steps.regression.outcome == 'failure' && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "$(cat /tmp/pytest.log)"
+
+      - name: Enforce regression result
+        if: steps.regression.outcome == 'failure'
+        run: exit 1
 
       - name: Persist isolated controller state
         if: ${{ github.ref == 'refs/heads/main' }}
