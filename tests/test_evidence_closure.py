@@ -23,7 +23,7 @@ def _classification_row(doc: str, item: str) -> str:
 def test_c05_is_source_derived_and_fail_closed():
     required = {"SER", "SRCLK", "RCLK"}
     optional = {"SRCLR"}
-    actual = set(re.findall(r"\b(?:SER|SRCLK|RCLK|SRCLR)\b", OUTPUT))
+    actual = set(re.findall(r"\bSR_(?:SER|SRCLK|RCLK|SRCLR)\b", OUTPUT))
     assert required <= actual
     assert optional <= actual
     assert "OE is hardware-interlock-owned" in OUTPUT
@@ -102,4 +102,4 @@ def test_phase2_topology_and_hardware_validation_remain_fail_closed():
     assert "Physically measured:** none" in CLOSURE
     assert "does not select a remedy" in CLOSURE
     assert "RON@3.3V NOT SPECIFIED" in AUDIT
-    assert "final pin allocation" in CLOSURE
+    assert "pin allocation" in CLOSURE and "unresolved" in CLOSURE.lower()
