@@ -79,6 +79,6 @@ Baseline components (STM32F103C8T6, SX1278/Ra-02, MAX3485, 74HC595 concept, CD40
 - C-06 is RESOLVED: USART RX uses NVIC USART RXNE, not EXTI. Historical EXTI wording is retained only as provenance.
 - C-21 is an EVIDENCE GAP: no guaranteed SN74HC595 timing at 3.3 V; interpolation is not treated as a guarantee.
 - C-20c is MEASUREMENT REQUIRED: no physical leakage data exists at 3.3 V or 5 V; T-G4-05 remains required.
-- C-20b is a VERIFIED INTERFACE INCOMPATIBILITY requiring an owner decision. No option or topology was selected. The 5 V to STM32 ADC/sense-node exposure remains a separate owner mitigation gate.
+- C-20b remains an EVIDENCE GAP: the DS5319 VOH relation is conditionally incompatible with CD4067 VIH at the relevant VDD values, but RX50's MCU VDD operating point is not locked. No option or topology was selected. The 5 V to STM32 ADC/sense-node exposure remains a separate owner mitigation gate.
 - Topology remains NOT LOCKED. No physical validation or terminal promotion is claimed.
 - Detailed lineage and the unselected C-20b matrix are in `PHASE2_EVIDENCE_CLOSURE.md`.
