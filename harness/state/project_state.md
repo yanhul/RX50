@@ -70,3 +70,15 @@ Baseline components (STM32F103C8T6, SX1278/Ra-02, MAX3485, 74HC595 concept, CD40
 14. M006 — G6 multi-channel authorization rule (owner evidence).
 15. M007 — G8 protocol draft (mask/sequence/ACK/NAK/replay).
 16. Any of the above may be reordered by the owner.
+
+
+## Phase 2 evidence-closure addendum
+
+- Baseline verified at commit `977b35014d7b7e01c56627894103bc95216befde`.
+- C-05 remains OPEN: SR control count corrected to 3 mandatory signals plus optional SRCLR; OE is interlock-owned; final MCU pin allocation is not registered or locked.
+- C-06 is RESOLVED: USART RX uses NVIC USART RXNE, not EXTI. Historical EXTI wording is retained only as provenance.
+- C-21 is an EVIDENCE GAP: no guaranteed SN74HC595 timing at 3.3 V; interpolation is not treated as a guarantee.
+- C-20c is MEASUREMENT REQUIRED: no physical leakage data exists at 3.3 V or 5 V; T-G4-05 remains required.
+- C-20b is a VERIFIED INTERFACE INCOMPATIBILITY requiring an owner decision. No option or topology was selected. The 5 V to STM32 ADC/sense-node exposure remains a separate owner mitigation gate.
+- Topology remains NOT LOCKED. No physical validation or terminal promotion is claimed.
+- Detailed lineage and the unselected C-20b matrix are in `PHASE2_EVIDENCE_CLOSURE.md`.
