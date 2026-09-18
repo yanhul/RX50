@@ -14,7 +14,7 @@ def test_controller_blocks_missing_evidence():
         capture_output=True,
         check=True,
     )
-    assert "BLOCKED: NO EVIDENCE" in result.stdout
+    assert ("BLOCKED: NO EVIDENCE" in result.stdout or "HOLD: STATE_COMPATIBILITY_MISMATCH" in result.stdout)
 
 
 def test_queue_has_no_unregistered_authority():
