@@ -21,7 +21,7 @@
 | Explicit generalized permit/capability object | AIOS-CENTRAL |
 | General contract/authority verifier | AIOS-CENTRAL |
 | External-effect receipt/reconciliation layer | AIOS-CENTRAL |
-| Central workload execution | AIOS-CENTRAL — pinned to `e2dc2c32bedf7de598b66e1bfe89f300fb83ccfc` |
+| Central workload execution | AIOS-CENTRAL — pinned to `4138678aea254beaee7dc57d3cd925238f5fcc12` |
 
 RX50 does not grow a second incompatible control plane. The `aios/adapter.py` workload is executed by the central AIOS runner; RX50 remains responsible only for its engineering/evidence semantics and safety gates.
 
