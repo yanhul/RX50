@@ -13,6 +13,23 @@ REQUIRED = (
 PROVENANCE = {"producer": "yanhul/RX50", "adapter": "rx50.engineering@1"}
 
 
+def _closure_blockers(root: Path) -> tuple[str, ...]:
+    """Expose authoritative closure blockers without changing the terminal gate."""
+    blockers: list[str] = []
+    g1g2 = (root / "RX50_G1_G2_REQUIREMENT_CLOSURE.md").read_text(encoding="utf-8")
+    if "G1 = HOLD" in g1g2:
+        blockers.append("G1:HOLD")
+    if "G2 = HOLD" in g1g2:
+        blockers.append("G2:HOLD")
+    raw = (root / "RX50_G4_RAW_EVIDENCE_REGISTER.md").read_text(encoding="utf-8")
+    if "Status: NO DATA INGESTED" in raw or "MEASUREMENT PENDING" in raw:
+        blockers.append("G4:MEASUREMENT_PENDING")
+    g5 = (root / "RX50_G5_PIN_MAP_FINAL.md").read_text(encoding="utf-8")
+    if "NOT LOCKED" in g5:
+        blockers.append("G5:NOT_LOCKED")
+    return tuple(blockers)
+
+
 def _artifact_manifest(root: Path, evidence: tuple[str, ...]) -> str:
     """Persist a generated, reproducible manifest and return its local ref."""
     artifact = root / "harness" / "state" / "rx50_engineering_evidence_set.json"
@@ -36,10 +53,13 @@ def execute(*, problem: str, workdir: str | Path = ".") -> dict[str, Any]:
                 "artifact_refs": (), "evidence_refs": (), "verification_refs": (), "provenance": PROVENANCE}
     evidence = tuple(f"sha256:{name}:{hashlib.sha256((root / name).read_bytes()).hexdigest()}" for name in REQUIRED)
     artifact_ref = _artifact_manifest(root, evidence)
+    blockers = _closure_blockers(root)
     physical = root / "evidence" / "physical"
     if not physical.exists() or not any(physical.iterdir()):
-        return {"status": "BLOCKED", "reason": "physical evidence required before engineering promotion",
-                "artifact_refs": (artifact_ref,), "evidence_refs": evidence,
+        blockers = (*blockers, "PHYSICAL:EVIDENCE_MISSING")
+    if blockers:
+        return {"status": "BLOCKED", "reason": "authoritative engineering closure blockers remain",
+                "blockers": blockers, "artifact_refs": (artifact_ref,), "evidence_refs": evidence,
                 "verification_refs": ("requirements_coverage", "contradiction_check"), "provenance": PROVENANCE}
     return {"status": "PASS", "problem": problem, "artifact_refs": (artifact_ref,),
             "evidence_refs": evidence,
