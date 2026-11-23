@@ -79,7 +79,9 @@ def _validate_physical_evidence(root: Path) -> tuple[list[str], list[str]]:
         if record["raw_data_sha256"] != digest:
             raise ValueError(f"measurement[{index}] raw data SHA-256 mismatch")
         evidence.append(f"sha256:{raw_ref}:{digest.removeprefix('sha256:')}")
-        verified_refs.append(f"physical_measurement:{record['test_id']}:{record['dut_id']}:{record['trial']}")
+        measurement_ref = f"physical_measurement:{record['test_id']}:{record['dut_id']}:{record['trial']}"
+        evidence.append(measurement_ref)
+        verified_refs.append(measurement_ref)
     return evidence, verified_refs
 
 
